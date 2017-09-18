@@ -2,6 +2,8 @@
 
 ###### Dev
 
+-   Conditionally use different past artist show fragments for iPad vs iPhone - alloy
+-   Upgrades Relay to ‘modern’ (v1.3.0) - alloy
 -   Upgrades React Native to v0.48.0 - sarah
 -   Extracts connectivity banner into its own component - sarah
 -   Adds stylelint to the dev-experience, not validated on CI yet - orta
@@ -23,9 +25,19 @@
 -   Adds a screen for metadata editing - orta
 -   Looks better on iPads - orta
 -   Adds a screen for setting the location - orta
+-   Adds a spinner at the end of submission - orta
+-   Submit draft metadata to convection - orta
 
 ###### Messaging
 
+-   Tap to open webview/refresh invoices - luc + matt
+-   Added spinner and 'no more' message when paginating thru inbox - matt
+-   Refactored messaging-related interfaces, fixed mutations, added tests - luc + matt
+-   Fixed pagination on conversation component - luc
+-   Added ability to sort messages in ascending and descending order - luc
+-   Added capability to mark a message as read by the user - matt
+-   Updated logic to render purch requests and invoices better - matt
+-   Updated styling on bottom dotted border of ConversationSnippet - erik
 -   Fixed incorrect use of Attachment props in invoice component - matt
 -   Added inline rendering for invoices - matt
 -   Removed hard-coded sanitization of message body - sarah

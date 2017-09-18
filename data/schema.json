@@ -24435,6 +24435,18 @@
               "deprecationReason": null
             },
             {
+              "name": "last_message_id",
+              "description": "Impulse id of the last message.",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
               "name": "is_last_message_to_user",
               "description": "True if user/conversation initiator is a recipient.",
               "args": [],
@@ -24449,6 +24461,18 @@
             {
               "name": "last_message_open",
               "description": "Timestamp if the user opened the last message, null in all other cases",
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "last_message_delivery_id",
+              "description": "Delivery id if the user is a recipient of the last message, null otherwise.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -24494,6 +24518,16 @@
               "name": "messages",
               "description": "A connection for all messages in a single conversation",
               "args": [
+                {
+                  "name": "sort",
+                  "description": null,
+                  "type": {
+                    "kind": "ENUM",
+                    "name": "sort",
+                    "ofType": null
+                  },
+                  "defaultValue": null
+                },
                 {
                   "name": "after",
                   "description": null,
@@ -24824,6 +24858,29 @@
           ]
         },
         {
+          "kind": "ENUM",
+          "name": "sort",
+          "description": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "enumValues": [
+            {
+              "name": "DESC",
+              "description": null,
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "ASC",
+              "description": null,
+              "isDeprecated": false,
+              "deprecationReason": null
+            }
+          ],
+          "possibleTypes": null
+        },
+        {
           "kind": "OBJECT",
           "name": "MessageConnection",
           "description": "A connection to a list of items.",
@@ -25012,7 +25069,7 @@
             },
             {
               "name": "body",
-              "description": "Text which has been parsed/sanitized of quoted replies (among other things).",
+              "description": "Unaltered text if possible, otherwise `body`: a parsed/sanitized version from Sendgrid.",
               "args": [],
               "type": {
                 "kind": "SCALAR",
@@ -35617,6 +35674,33 @@
               "deprecationReason": null
             },
             {
+              "name": "markReadMessage",
+              "description": "Marking a message as read",
+              "args": [
+                {
+                  "name": "input",
+                  "description": null,
+                  "type": {
+                    "kind": "NON_NULL",
+                    "name": null,
+                    "ofType": {
+                      "kind": "INPUT_OBJECT",
+                      "name": "MarkReadMessageMutationInput",
+                      "ofType": null
+                    }
+                  },
+                  "defaultValue": null
+                }
+              ],
+              "type": {
+                "kind": "OBJECT",
+                "name": "MarkReadMessageMutationPayload",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
               "name": "saveArtwork",
               "description": null,
               "args": [
@@ -36399,6 +36483,90 @@
         },
         {
           "kind": "INPUT_OBJECT",
+          "name": "MarkReadMessageMutationInput",
+          "description": null,
+          "fields": null,
+          "inputFields": [
+            {
+              "name": "conversationId",
+              "description": "The id of the conversation to be updated",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "defaultValue": null
+            },
+            {
+              "name": "deliveryId",
+              "description": "The delivery object that is marked as read",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              },
+              "defaultValue": null
+            },
+            {
+              "name": "clientMutationId",
+              "description": null,
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "defaultValue": null
+            }
+          ],
+          "interfaces": null,
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "OBJECT",
+          "name": "MarkReadMessageMutationPayload",
+          "description": null,
+          "fields": [
+            {
+              "name": "delivery",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "OBJECT",
+                "name": "Delivery",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "clientMutationId",
+              "description": null,
+              "args": [],
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            }
+          ],
+          "inputFields": null,
+          "interfaces": [],
+          "enumValues": null,
+          "possibleTypes": null
+        },
+        {
+          "kind": "INPUT_OBJECT",
           "name": "SaveArtworkInput",
           "description": null,
           "fields": null,
@@ -36644,6 +36812,16 @@
               "defaultValue": null
             },
             {
+              "name": "state",
+              "description": "The internal state of the work, e.g. draft/submitted",
+              "type": {
+                "kind": "ENUM",
+                "name": "SubmissionStateAggregation",
+                "ofType": null
+              },
+              "defaultValue": null
+            },
+            {
               "name": "width",
               "description": "The width of the work",
               "type": {
@@ -36795,6 +36973,29 @@
             },
             {
               "name": "IN",
+              "description": null,
+              "isDeprecated": false,
+              "deprecationReason": null
+            }
+          ],
+          "possibleTypes": null
+        },
+        {
+          "kind": "ENUM",
+          "name": "SubmissionStateAggregation",
+          "description": null,
+          "fields": null,
+          "inputFields": null,
+          "interfaces": null,
+          "enumValues": [
+            {
+              "name": "DRAFT",
+              "description": null,
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
+              "name": "SUBMITTED",
               "description": null,
               "isDeprecated": false,
               "deprecationReason": null
@@ -37055,6 +37256,18 @@
               "deprecationReason": null
             },
             {
+              "name": "state",
+              "description": "The internal state of the work, e.g. draft/submitted",
+              "args": [],
+              "type": {
+                "kind": "ENUM",
+                "name": "SubmissionStateAggregation",
+                "ofType": null
+              },
+              "isDeprecated": false,
+              "deprecationReason": null
+            },
+            {
               "name": "width",
               "description": "The width of the work",
               "args": [],
@@ -37264,6 +37477,16 @@
               "type": {
                 "kind": "SCALAR",
                 "name": "String",
+                "ofType": null
+              },
+              "defaultValue": null
+            },
+            {
+              "name": "state",
+              "description": "The internal state of the work, e.g. draft/submitted",
+              "type": {
+                "kind": "ENUM",
+                "name": "SubmissionStateAggregation",
                 "ofType": null
               },
               "defaultValue": null

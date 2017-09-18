@@ -38,22 +38,21 @@ interface RendererProps {
 
 interface ArtistRendererProps extends RendererProps {
   artistID: string
+  isPad: boolean
 }
 
-export const ArtistRenderer: React.SFC<ArtistRendererProps> = ({ render, artistID }) => {
+export const ArtistRenderer: React.SFC<ArtistRendererProps> = ({ render, artistID, isPad }) => {
   return (
     <QueryRenderer
       environment={environment}
       query={graphql`
-        query QueryRenderersArtistQuery($artistID: String!) {
+        query QueryRenderersArtistQuery($artistID: String!, $isPad: Boolean!) {
           artist(id: $artistID) {
             ...Artist_artist
           }
         }
       `}
-      variables={{
-        artistID,
-      }}
+      variables={{ artistID, isPad }}
       render={render}
     />
   )
@@ -61,13 +60,15 @@ export const ArtistRenderer: React.SFC<ArtistRendererProps> = ({ render, artistI
 
 interface ConversationRendererProps extends RendererProps {
   conversationID: string
+  cursor?: string
+  count?: number
 }
 
 export const ConversationRenderer: React.SFC<ConversationRendererProps> = ({ render, conversationID }) => {
   return (
     <QueryRenderer
       environment={environment}
-      query={graphql`
+      query={graphql.experimental`
         query QueryRenderersConversationQuery($conversationID: String!) {
           me {
             ...Conversation_me
@@ -76,6 +77,7 @@ export const ConversationRenderer: React.SFC<ConversationRendererProps> = ({ ren
       `}
       variables={{
         conversationID,
+        count: 10,
       }}
       render={render}
     />

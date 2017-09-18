@@ -1610,11 +1610,17 @@ type Conversation implements Node {
     timezone: String
   ): String
 
+  # Impulse id of the last message.
+  last_message_id: String
+
   # True if user/conversation initiator is a recipient.
   is_last_message_to_user: Boolean
 
   # Timestamp if the user opened the last message, null in all other cases
   last_message_open: String
+
+  # Delivery id if the user is a recipient of the last message, null otherwise.
+  last_message_delivery_id: String
 
   # Only the artworks discussed in the conversation.
   artworks: [Artwork]
@@ -1623,7 +1629,7 @@ type Conversation implements Node {
   items: [ConversationItem]
 
   # A connection for all messages in a single conversation
-  messages(after: String, first: Int, before: String, last: Int): MessageConnection
+  messages(sort: sort, after: String, first: Int, before: String, last: Int): MessageConnection
 }
 
 # A connection to a list of items.
@@ -1730,6 +1736,9 @@ input CreateSubmissionMutationInput {
 
   # The name of the work
   title: String
+
+  # The internal state of the work, e.g. draft/submitted
+  state: SubmissionStateAggregation
 
   # The width of the work
   width: String
@@ -2864,6 +2873,20 @@ type LotStanding {
   sale_artwork: SaleArtwork
 }
 
+input MarkReadMessageMutationInput {
+  # The id of the conversation to be updated
+  conversationId: String!
+
+  # The delivery object that is marked as read
+  deliveryId: String!
+  clientMutationId: String
+}
+
+type MarkReadMessageMutationPayload {
+  delivery: Delivery
+  clientMutationId: String
+}
+
 type Me implements Node {
   # A globally unique ID.
   __id: ID!
@@ -2998,7 +3021,7 @@ type Message implements Node {
   # Full unsanitized text.
   raw_text: String! @deprecated(reason: "Prefer to use the parsed/cleaned-up `body`.")
 
-  # Text which has been parsed/sanitized of quoted replies (among other things).
+  # Unaltered text if possible, otherwise `body`: a parsed/sanitized version from Sendgrid.
   body: String
   deliveries: [Delivery]
   attachments: [Attachment]
@@ -3048,6 +3071,9 @@ type Mutation {
 
   # Appending a message to a conversation thread
   sendConversationMessage(input: SendConversationMessageMutationInput!): SendConversationMessageMutationPayload
+
+  # Marking a message as read
+  markReadMessage(input: MarkReadMessageMutationInput!): MarkReadMessageMutationPayload
   saveArtwork(input: SaveArtworkInput!): SaveArtworkPayload
 
   # Create a new consignment submission using Convection
@@ -4440,6 +4466,11 @@ enum ShowSort {
   SORTABLE_NAME_DESC
 }
 
+enum sort {
+  DESC
+  ASC
+}
+
 type Status {
   gravity: StatusGravity
 
@@ -4503,6 +4534,9 @@ type Submission {
   # The name of the work
   title: String
 
+  # The internal state of the work, e.g. draft/submitted
+  state: SubmissionStateAggregation
+
   # The width of the work
   width: String
 
@@ -4531,6 +4565,11 @@ enum SubmissionCategoryAggregation {
 enum SubmissionDimensionAggregation {
   CM
   IN
+}
+
+enum SubmissionStateAggregation {
+  DRAFT
+  SUBMITTED
 }
 
 type Tag {
@@ -4682,6 +4721,9 @@ input UpdateSubmissionMutationInput {
 
   # The name of the work
   title: String
+
+  # The internal state of the work, e.g. draft/submitted
+  state: SubmissionStateAggregation
 
   # The width of the work
   width: String
