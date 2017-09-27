@@ -1,32 +1,11 @@
 import * as React from "react"
-import {
-  commitMutation,
-  createPaginationContainer,
-  Environment,
-  graphql,
-  MutationConfig,
-  RecordSourceSelectorProxy,
-  RelayPaginationProp,
-} from "react-relay"
-import styled from "styled-components/native"
+import { ActivityIndicator, Dimensions, FlatList, RefreshControl } from "react-native"
+import { createPaginationContainer, graphql, RelayPaginationProp } from "react-relay"
 
+import ARSwitchBoard from "../../../NativeModules/SwitchBoard"
 import Message from "./Message"
 import ArtworkPreview from "./Preview/ArtworkPreview"
 import ShowPreview from "./Preview/ShowPreview"
-
-import {
-  ActivityIndicator,
-  FlatList,
-  ImageURISource,
-  NetInfo,
-  RefreshControl,
-  View,
-  ViewProperties,
-} from "react-native"
-import colors from "../../../../data/colors"
-import DottedLine from "../../../Components/DottedLine"
-
-import ARSwitchBoard from "../../../NativeModules/SwitchBoard"
 
 interface Props {
   conversation?: RelayProps["me"]["conversation"]
@@ -37,6 +16,7 @@ interface Props {
 interface State {
   fetchingMoreData: boolean
   reloadingData: boolean
+  shouldStickFirstMessageToTop: boolean
 }
 
 export class Messages extends React.Component<Props, State> {
@@ -46,10 +26,11 @@ export class Messages extends React.Component<Props, State> {
     this.state = {
       fetchingMoreData: false,
       reloadingData: false,
+      shouldStickFirstMessageToTop: false,
     }
   }
 
-  renderMessage({ item }) {
+  renderMessage({ item, index }) {
     const conversationItem = this.props.conversation.items[0].item
     const conversation = this.props.conversation
     const partnerName = conversation.to.name
@@ -57,8 +38,9 @@ export class Messages extends React.Component<Props, State> {
     const initials = item.is_from_user ? conversation.from.initials : conversation.to.initials
     return (
       <Message
-        firstMessage={item.firstMessage}
-        initialText={item}
+        index={index}
+        firstMessage={item.first_message}
+        initialText={conversation.initial_message}
         message={item}
         senderName={senderName}
         initials={initials}
@@ -102,7 +84,6 @@ export class Messages extends React.Component<Props, State> {
 
   reload() {
     const count = this.props.conversation.messages.edges.length
-
     this.setState({ reloadingData: true })
     this.props.relay.refetchConnection(count, e => {
       this.setState({ reloadingData: false })
@@ -114,19 +95,29 @@ export class Messages extends React.Component<Props, State> {
     const messageCount = edges.length
     const messages = edges.map((edge, index) => {
       const isFirstMessage = this.props.relay && !this.props.relay.hasMore() && index === messageCount - 1
-      return { first_message: isFirstMessage, key: index, ...edge.node }
+      return { first_message: isFirstMessage, key: edge.cursor, ...edge.node }
     })
     const refreshControl = <RefreshControl refreshing={this.state.reloadingData} onRefresh={this.reload.bind(this)} />
 
     return (
       <FlatList
-        inverted
-        data={messages}
+        inverted={!this.state.shouldStickFirstMessageToTop}
+        data={this.state.shouldStickFirstMessageToTop ? messages.reverse() : messages}
         renderItem={this.renderMessage.bind(this)}
         onEndReached={this.loadMore.bind(this)}
         onEndReachedThreshold={0.2}
+        onContentSizeChange={(width, height) => {
+          // If there aren't enough items to scroll through
+          // display messages from the top
+          const windowHeight = Dimensions.get("window").height
+          const containerHeight = windowHeight - 100
+
+          this.setState({
+            shouldStickFirstMessageToTop: height < containerHeight,
+          })
+        }}
         refreshControl={refreshControl}
-        ItemSeparatorComponent={DottedLine}
+        ListFooterComponent={<ActivityIndicator animating={this.state.fetchingMoreData} hidesWhenStopped />}
       />
     )
   }
@@ -149,6 +140,7 @@ export default createPaginationContainer(
           name
           initials
         }
+        initial_message
         messages(first: $count, after: $after, sort: DESC) @connection(key: "Messages_messages", filters: []) {
           pageInfo {
             startCursor
@@ -227,11 +219,13 @@ interface RelayProps {
         email: string
         initials: string
       }
+      initial_message: string
       messages: {
         pageInfo?: {
           hasNextPage: boolean
         }
         edges: Array<{
+          cursor: string
           node: {
             impulse_id: string
             is_from_user: boolean

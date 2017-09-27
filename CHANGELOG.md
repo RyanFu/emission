@@ -2,6 +2,7 @@
 
 ###### Dev
 
+-   Remaps space key bidding to ctrl+space so we can enter spaces fromthe simulator - luc
 -   Conditionally use different past artist show fragments for iPad vs iPhone - alloy
 -   Upgrades Relay to ‘modern’ (v1.3.0) - alloy
 -   Upgrades React Native to v0.48.0 - sarah
@@ -14,6 +15,7 @@
 -   Adds an env var for google maps API - orta
 -   Updates the beta/dev UI, and with docs - orta
 -   Some testing stability work - orta
+-   Add React Tracking lib for analytics - maxim
 
 ###### Consignments
 
@@ -31,12 +33,21 @@
 ###### Messaging
 
 -   Tap to open webview/refresh invoices - luc + matt
+-   Temporarily removed partner response rate in inquiry - maxim
+-   Fixed payment request component collapsing and minor UI changes - luc
+-   Added support for live open auctions for active bids - sarah
+-   Fixed separator styling in the message component - luc
+-   Moved conversation loading indicator inside list view - luc
+-   Added Pending state to message timestamps - sarah
+-   Initial spike on adding some link detection - maxim + matt
+-   Initial message now sticks to the top of the scrollview - luc
 -   Added spinner and 'no more' message when paginating thru inbox - matt
 -   Refactored messaging-related interfaces, fixed mutations, added tests - luc + matt
 -   Fixed pagination on conversation component - luc
 -   Added ability to sort messages in ascending and descending order - luc
 -   Added capability to mark a message as read by the user - matt
 -   Updated logic to render purch requests and invoices better - matt
+-   If a message fails to send, display it again in the Composer so the user can retry - sarah
 -   Updated styling on bottom dotted border of ConversationSnippet - erik
 -   Fixed incorrect use of Attachment props in invoice component - matt
 -   Added inline rendering for invoices - matt
