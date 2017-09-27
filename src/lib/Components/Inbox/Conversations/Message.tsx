@@ -167,7 +167,7 @@ export class Message extends React.Component<Props, any> {
 
             {message.invoice &&
               <PreviewContainer>
-                <InvoicePreview invoice={message.invoice} />
+                <InvoicePreview invoice={message.invoice} onSelected={previewInvoice} />
               </PreviewContainer>}
 
             {this.renderAttachmentPreviews(message.attachments)}
